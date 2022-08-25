@@ -1,11 +1,20 @@
 package com.example.welcomeservice.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class Favourites {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,36 +27,4 @@ public class Favourites {
     @JoinTable( name = "favourite_property" , joinColumns = { @JoinColumn(name = "favId") } ,  inverseJoinColumns = { @JoinColumn(name = "propertyId") } )
     private List<Property> properties;
 
-    public Favourites() {
-    }
-
-    public Favourites(int favId, LocalDateTime createdAt, List<Property> properties) {
-        this.favId = favId;
-        this.createdAt = createdAt;
-        this.properties = properties;
-    }
-
-    public int getFavId() {
-        return favId;
-    }
-
-    public void setFavId(int favId) {
-        this.favId = favId;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public List<Property> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<Property> properties) {
-        this.properties = properties;
-    }
 }
