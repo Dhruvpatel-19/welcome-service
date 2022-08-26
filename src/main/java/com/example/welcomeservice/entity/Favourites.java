@@ -23,8 +23,8 @@ public class Favourites {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @ManyToMany(targetEntity = Property.class , cascade = CascadeType.ALL)
-    @JoinTable( name = "favourite_property" , joinColumns = { @JoinColumn(name = "favId") } ,  inverseJoinColumns = { @JoinColumn(name = "propertyId") } )
-    private List<Property> properties;
+    @OneToOne(targetEntity = Property.class)
+    @JoinColumn(name = "property_id_fk" , referencedColumnName = "propertyId")
+    private Property property;
 
 }

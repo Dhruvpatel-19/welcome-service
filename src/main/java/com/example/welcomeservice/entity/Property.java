@@ -46,6 +46,8 @@ public class Property {
     @Column(nullable = false)
     private String parkingAvailability;
 
+    private boolean isSold;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 

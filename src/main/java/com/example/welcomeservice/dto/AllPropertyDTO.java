@@ -12,6 +12,7 @@ public class AllPropertyDTO {
     private String price;
     private String area;
     private String image;
+    private boolean isSold;
     private AddressDTO address;
 
 }

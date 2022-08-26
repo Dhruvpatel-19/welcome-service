@@ -38,6 +38,10 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @OneToMany(targetEntity = Property.class)
+    @JoinColumn(name = "user_id_fk" , referencedColumnName = "userId")
+    private List<Property> propertyList;
+
     @OneToMany(targetEntity = Favourites.class , cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id_fk" , referencedColumnName = "userId")
     private List<Favourites> favourites;
