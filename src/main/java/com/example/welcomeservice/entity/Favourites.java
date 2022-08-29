@@ -23,8 +23,8 @@ public class Favourites {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @OneToOne(targetEntity = Property.class)
-    @JoinColumn(name = "property_id_fk" , referencedColumnName = "propertyId")
-    private Property property;
+    @ManyToMany(targetEntity = Property.class)
+    @JoinTable(name = "favId_propertyId" , joinColumns = @JoinColumn(name = "favId") , inverseJoinColumns = @JoinColumn(name = "propertyId") )
+    private List<Property> propertyList;
 
 }
