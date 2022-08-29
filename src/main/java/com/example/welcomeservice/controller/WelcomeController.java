@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -25,8 +24,8 @@ public class WelcomeController {
     }
 
     @GetMapping(value = "/buyProperty/{id}")
-    public void buyProperty(HttpServletRequest request, HttpServletResponse response , @PathVariable("id") int id) throws Exception {
-        welcomeService.buyProperty(request,response,id);
+    public String buyProperty(HttpServletRequest request ,  @PathVariable("id") int id) throws Exception {
+        return welcomeService.buyProperty(request, id);
     }
 
 }

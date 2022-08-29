@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,12 +31,20 @@ public class WelcomeService {
         return propertyList.stream().map(this::toAllPropertyDTO).collect(Collectors.toList());
     }
 
-    public void buyProperty(HttpServletRequest request, HttpServletResponse response , int propertyid) throws Exception {
+    public String buyProperty(HttpServletRequest request, int propertyid) throws Exception {
 
         Property property = propertyService.getProperty(propertyid);
 
+        /*if(property == null)
+            throw new Exception("Property doesn't exist");*/
+
         if(property == null)
-            throw new Exception("Property doesn't exist");
+            return "Property doesn't exists";
+
+        if(property.isSold())
+            return "Property already bought";
+
+        property.setSold(true);
 
         String requestTokenHeader = request.getHeader("Authorization");
         String jwtToken = null;
@@ -56,7 +63,9 @@ public class WelcomeService {
             List<Property> userPropertyList = user.getPropertyList();
             userPropertyList.add(property);
             userRepository.save(user);
+            return "Property bought successfully";
         }
+        return "Some error occured for buyProperty ";
     }
 
     private AllPropertyDTO toAllPropertyDTO(Property property){

@@ -3,10 +3,9 @@ package com.example.welcomeservice.controller;
 import com.example.welcomeservice.entity.User;
 import com.example.welcomeservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/callWelcomeService/user")
@@ -18,5 +17,10 @@ public class UserController {
     @PostMapping(value = "/register")
     public User saveUser(@RequestBody User user){
         return userService.saveUser(user);
+    }
+
+    @GetMapping(value = "/findAll")
+    public List<User> findAllUser(){
+        return userService.findAllUser();
     }
 }
