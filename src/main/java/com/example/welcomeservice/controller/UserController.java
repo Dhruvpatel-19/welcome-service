@@ -23,4 +23,9 @@ public class UserController {
     public List<User> findAllUser(){
         return userService.findAllUser();
     }
+
+    @PutMapping(value = "/update/{id}")
+    public void updateUser(@PathVariable("id") int id ,@RequestBody User updatedUser){
+        userService.updateUser(id,  updatedUser);
+    }
 }

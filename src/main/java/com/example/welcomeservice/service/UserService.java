@@ -25,4 +25,14 @@ public class UserService {
     public List<User>  findAllUser(){
         return userRepository.findAll();
     }
+
+    public void updateUser(int id , User updatedUser){
+        User user = userRepository.findById(id).orElse(null);
+
+        user.setFirstName(updatedUser.getFirstName());
+        user.setLastName(updatedUser.getLastName());
+        user.setMobileNumber(updatedUser.getMobileNumber());
+
+        userRepository.save(user);
+    }
 }
