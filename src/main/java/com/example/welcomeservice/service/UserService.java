@@ -18,9 +18,6 @@ public class UserService {
     private UserRepository userRepository;
 
     public User saveUser(User user){
-        Favourites fav = new Favourites();
-        fav.setCreatedAt(LocalDateTime.now());
-        user.setFavourites(fav);
         return userRepository.save(user);
     }
 
