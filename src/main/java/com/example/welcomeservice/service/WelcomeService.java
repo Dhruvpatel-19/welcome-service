@@ -1,11 +1,12 @@
 package com.example.welcomeservice.service;
 
-import com.example.welcomeservice.dto.AddressDTO;
 import com.example.welcomeservice.dto.AllPropertyDTO;
 import com.example.welcomeservice.entity.Address;
+import com.example.welcomeservice.entity.Owner;
 import com.example.welcomeservice.entity.Property;
 import com.example.welcomeservice.entity.User;
 import com.example.welcomeservice.jwt.JwtUtil;
+import com.example.welcomeservice.repository.OwnerRepository;
 import com.example.welcomeservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,9 @@ public class WelcomeService {
     private UserRepository userRepository;
 
     @Autowired
+    private OwnerRepository ownerRepository;
+
+    @Autowired
     private JwtUtil jwtUtil;
 
     public List<AllPropertyDTO> getAllProperty(){
@@ -37,32 +41,16 @@ public class WelcomeService {
 
         Property property = propertyService.getProperty(propertyid);
 
-        /*if(property == null)
-            throw new Exception("Property doesn't exist");*/
-
         if(property == null)
             return "Property doesn't exists";
 
         if(property.isSold())
             return "Property already bought";
 
-        property.setSold(true);
-
-        String requestTokenHeader = request.getHeader("Authorization");
-        String jwtToken = null;
-        String email = null;
-        if(requestTokenHeader!=null && requestTokenHeader.startsWith("Bearer ")){
-            jwtToken = requestTokenHeader.substring(7);
-
-            try{
-                email = jwtUtil.extractUsername(jwtToken);
-
-            }catch (Exception e){
-                throw new Exception("User not found exception");
-            }
-
-            User user = userRepository.findByEmail(email);
+        User user = (User) getOwnerOrUser(request);
+        if(user!=null){
             List<Property> userPropertyList = user.getPropertyList();
+            property.setSold(true);
             userPropertyList.add(property);
             userRepository.save(user);
             return "Property bought successfully";
@@ -73,24 +61,38 @@ public class WelcomeService {
     private AllPropertyDTO toAllPropertyDTO(Property property){
 
         AllPropertyDTO allPropertyDTO = new AllPropertyDTO();
-        AddressDTO addressDTO = toAddressDTO(property.getAddress());
 
+        allPropertyDTO.setPropertyId(property.getPropertyId());
         allPropertyDTO.setPropertyName(property.getPropertyName());
         allPropertyDTO.setPrice(property.getPrice());
         allPropertyDTO.setArea(property.getArea());
         allPropertyDTO.setImage(property.getImages().get(0).getImage());
-        allPropertyDTO.setAddress(addressDTO);
+        allPropertyDTO.setAddress(property.getAddress());
 
         return allPropertyDTO;
     }
 
-    private AddressDTO toAddressDTO(Address address){
-        AddressDTO addressDTO = new AddressDTO();
-        addressDTO.setStreetLine(address.getStreetLine());
-        addressDTO.setAdditionalStreet(address.getAdditionalStreet());
-        addressDTO.setCity(address.getCity());
-        addressDTO.setState(address.getState());
-        addressDTO.setPostCode(address.getPostCode());
-        return addressDTO;
+    private Object getOwnerOrUser(HttpServletRequest request) throws Exception {
+        String requestTokenHeader = request.getHeader("Authorization");
+        String jwtToken = null;
+        String email = null;
+
+        if(requestTokenHeader!=null && requestTokenHeader.startsWith("Bearer ")){
+            jwtToken = requestTokenHeader.substring(7);
+            try {
+                email = jwtUtil.extractUsername(jwtToken);
+            }catch (Exception e){
+                throw new Exception("User not found");
+            }
+
+            User user = userRepository.findByEmail(email);
+            Owner owner = ownerRepository.findByEmail(email);
+            if(user!=null)
+                return user;
+            else
+                return owner;
+        }
+        return null;
     }
+
 }
