@@ -5,6 +5,7 @@ import com.example.welcomeservice.entity.Owner;
 import com.example.welcomeservice.entity.Property;
 import com.example.welcomeservice.entity.User;
 import com.example.welcomeservice.jwt.JwtUtil;
+import com.example.welcomeservice.mapstruct.MapStructMapper;
 import com.example.welcomeservice.repository.OwnerRepository;
 import com.example.welcomeservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +30,14 @@ public class WelcomeService {
     private OwnerRepository ownerRepository;
 
     @Autowired
+    private MapStructMapper mapStructMapper;
+
+    @Autowired
     private JwtUtil jwtUtil;
 
     public List<AllPropertyDTO> getAllProperty(){
         List<Property> propertyList = propertyService.getAllProperty();
-        return propertyList.stream().map(this::toAllPropertyDTO).collect(Collectors.toList());
+        return propertyList.stream().map(property -> mapStructMapper.propertyToAllPropertyDto(property)).collect(Collectors.toList());
     }
 
     public String buyProperty(HttpServletRequest request, int propertyid) throws Exception {
@@ -60,7 +64,7 @@ public class WelcomeService {
         return "Some error occured for buyProperty ";
     }
 
-    private AllPropertyDTO toAllPropertyDTO(Property property){
+    /*private AllPropertyDTO toAllPropertyDTO(Property property){
 
         AllPropertyDTO allPropertyDTO = new AllPropertyDTO();
 
@@ -72,7 +76,7 @@ public class WelcomeService {
         allPropertyDTO.setAddress(property.getAddress());
 
         return allPropertyDTO;
-    }
+    }*/
 
     private Object getOwnerOrUser(HttpServletRequest request) throws Exception {
         String requestTokenHeader = request.getHeader("Authorization");
