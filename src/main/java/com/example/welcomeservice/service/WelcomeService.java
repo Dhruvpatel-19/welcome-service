@@ -1,7 +1,6 @@
 package com.example.welcomeservice.service;
 
 import com.example.welcomeservice.dto.AllPropertyDTO;
-import com.example.welcomeservice.entity.Address;
 import com.example.welcomeservice.entity.Owner;
 import com.example.welcomeservice.entity.Property;
 import com.example.welcomeservice.entity.User;
@@ -49,6 +48,9 @@ public class WelcomeService {
 
         User user = (User) getOwnerOrUser(request);
         if(user!=null){
+            property.setUser(user);
+            propertyService.saveProperty(property);
+
             List<Property> userPropertyList = user.getPropertyList();
             property.setSold(true);
             userPropertyList.add(property);

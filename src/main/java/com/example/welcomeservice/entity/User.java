@@ -39,8 +39,7 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(targetEntity = Property.class)
-    @JoinColumn(name = "user_id_fk" , referencedColumnName = "userId")
+    @OneToMany(mappedBy = "user" , orphanRemoval = true)
     private List<Property> propertyList;
 
     @JsonIgnore //to avoid error  at com.fasterxml.jackson.databind.ser.BeanSerializer.serialize(BeanSerializer.java:178) ~[jackson-databind-2.13.3.jar:2.13.3]

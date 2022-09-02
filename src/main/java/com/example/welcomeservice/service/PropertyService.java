@@ -30,4 +30,8 @@ public class PropertyService {
             return null;
         }
     }
+
+    public Property saveProperty(Property property){
+        return propertyRepository.save(property);
+    }
 }

@@ -1,13 +1,11 @@
 package com.example.welcomeservice.service;
 
-import com.example.welcomeservice.entity.Favourites;
 import com.example.welcomeservice.entity.User;
 import com.example.welcomeservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
