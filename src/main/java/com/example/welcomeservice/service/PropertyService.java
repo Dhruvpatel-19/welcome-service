@@ -1,5 +1,6 @@
 package com.example.welcomeservice.service;
 
+import com.example.welcomeservice.Exception.Handler.PropertyNotFoundException;
 import com.example.welcomeservice.entity.Property;
 import com.example.welcomeservice.repository.PropertyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,18 +18,16 @@ public class PropertyService {
     private PropertyRepository propertyRepository;
 
     public List<Property> getAllProperty(){
+
+        if(propertyRepository.findAll().isEmpty()) throw new PropertyNotFoundException();
+
         return propertyRepository.findAll();
     }
 
     public Property getProperty(int id){
         Optional<Property> property = propertyRepository.findById(id);
-
-        if(property.isPresent()){
+        if (property.isPresent()==false) throw new PropertyNotFoundException();
             return property.get();
-        }
-        else{
-            return null;
-        }
     }
 
     public Property saveProperty(Property property){
