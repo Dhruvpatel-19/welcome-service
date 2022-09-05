@@ -1,6 +1,6 @@
 package com.example.welcomeservice.service;
 
-import com.example.welcomeservice.Exception.Handler.UserNotFoundException;
+import com.example.welcomeservice.exception.UserNotFoundException;
 import com.example.welcomeservice.dto.UserDTO;
 import com.example.welcomeservice.entity.User;
 import com.example.welcomeservice.mapstruct.MapStructMapper;

@@ -1,7 +1,7 @@
 package com.example.welcomeservice.service;
 
-import com.example.welcomeservice.Exception.Handler.PropertyNotFoundException;
-import com.example.welcomeservice.Exception.Handler.UserNotFoundException;
+import com.example.welcomeservice.exception.PropertyNotFoundException;
+import com.example.welcomeservice.exception.UserNotFoundException;
 import com.example.welcomeservice.dto.AllPropertyDTO;
 import com.example.welcomeservice.entity.Owner;
 import com.example.welcomeservice.entity.Property;

@@ -1,6 +1,7 @@
-package com.example.welcomeservice.Exception.Handler;
-import  com.example.welcomeservice.Exception.Handler.UserNotFoundException;
+package com.example.welcomeservice.exception.handler;
 
+import com.example.welcomeservice.exception.PropertyNotFoundException;
+import com.example.welcomeservice.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

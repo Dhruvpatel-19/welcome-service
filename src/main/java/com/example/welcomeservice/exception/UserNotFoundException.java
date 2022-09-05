@@ -1,4 +1,4 @@
-package com.example.welcomeservice.Exception.Handler;
+package com.example.welcomeservice.exception;
 
 public class UserNotFoundException  extends RuntimeException{
   private static final long serialVersionUID = 1L;
