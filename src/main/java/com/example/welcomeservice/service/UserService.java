@@ -1,7 +1,9 @@
 package com.example.welcomeservice.service;
 
 import com.example.welcomeservice.Exception.Handler.UserNotFoundException;
+import com.example.welcomeservice.dto.UserDTO;
 import com.example.welcomeservice.entity.User;
+import com.example.welcomeservice.mapstruct.MapStructMapper;
 import com.example.welcomeservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,8 @@ import java.util.List;
 @Transactional
 public class UserService {
 
+    @Autowired
+    private MapStructMapper mapStructMapper;
     @Autowired
     private UserRepository userRepository;
 
@@ -26,7 +30,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User updateUser(int id , User updatedUser){
+    public UserDTO updateUser(int id , User updatedUser){
         User user = userRepository.findById(id).orElse(null);
         if(userRepository.findById(id)==null)throw new UserNotFoundException();
         user.setFirstName(updatedUser.getFirstName());
@@ -34,6 +38,6 @@ public class UserService {
         user.setMobileNumber(updatedUser.getMobileNumber());
 
         userRepository.save(user);
-        return user;
+        return mapStructMapper.userToUserDto(user);
     }
 }
