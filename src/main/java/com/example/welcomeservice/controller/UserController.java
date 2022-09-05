@@ -1,5 +1,6 @@
 package com.example.welcomeservice.controller;
 
+import com.example.welcomeservice.dto.UserDTO;
 import com.example.welcomeservice.entity.User;
 import com.example.welcomeservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/update/{id}")
-    public void updateUser(@PathVariable("id") int id ,@RequestBody User updatedUser){
-        userService.updateUser(id,  updatedUser);
+    public UserDTO updateUser(@PathVariable("id") int id ,@RequestBody User updatedUser){
+        return userService.updateUser(id,  updatedUser);
     }
 }

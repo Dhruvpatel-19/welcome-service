@@ -1,5 +1,7 @@
 package com.example.welcomeservice.service;
 
+import com.example.welcomeservice.Exception.Handler.PropertyNotFoundException;
+import com.example.welcomeservice.Exception.Handler.UserNotFoundException;
 import com.example.welcomeservice.dto.AllPropertyDTO;
 import com.example.welcomeservice.entity.Owner;
 import com.example.welcomeservice.entity.Property;
@@ -37,6 +39,7 @@ public class WelcomeService {
 
     public List<AllPropertyDTO> getAllProperty(){
         List<Property> propertyList = propertyService.getAllProperty();
+        if(propertyList.isEmpty()) throw new PropertyNotFoundException();
         return propertyList.stream().map(property -> mapStructMapper.propertyToAllPropertyDto(property)).collect(Collectors.toList());
     }
 
@@ -44,8 +47,8 @@ public class WelcomeService {
 
         Property property = propertyService.getProperty(propertyid);
 
-        if(property == null)
-            return "Property doesn't exists";
+
+        if(property == null) throw new PropertyNotFoundException();
 
         if(property.isSold())
             return "Property already bought";
@@ -78,21 +81,18 @@ public class WelcomeService {
         return allPropertyDTO;
     }*/
 
-    private Object getOwnerOrUser(HttpServletRequest request) throws Exception {
+    private Object getOwnerOrUser(HttpServletRequest request){
         String requestTokenHeader = request.getHeader("Authorization");
         String jwtToken = null;
         String email = null;
-
         if(requestTokenHeader!=null && requestTokenHeader.startsWith("Bearer ")){
             jwtToken = requestTokenHeader.substring(7);
-            try {
-                email = jwtUtil.extractUsername(jwtToken);
-            }catch (Exception e){
-                throw new Exception("User not found");
-            }
-
+//            if(jwtUtil.isTokenExpired(jwtToken)==true) throw new JwtTokenExpiredException();
+            email = jwtUtil.extractUsername(jwtToken);
             User user = userRepository.findByEmail(email);
             Owner owner = ownerRepository.findByEmail(email);
+            if(user == null && owner==null)
+                throw new UserNotFoundException();
             if(user!=null)
                 return user;
             else
