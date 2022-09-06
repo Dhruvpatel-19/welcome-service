@@ -1,7 +1,7 @@
 package com.example.welcomeservice.service;
 
-import com.example.welcomeservice.exception.PropertyNotFoundException;
 import com.example.welcomeservice.entity.Property;
+import com.example.welcomeservice.exception.PropertyNotFoundException;
 import com.example.welcomeservice.repository.PropertyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,15 +1,18 @@
 package com.example.welcomeservice.service;
 
-import com.example.welcomeservice.exception.PropertyNotFoundException;
-import com.example.welcomeservice.exception.UserNotFoundException;
 import com.example.welcomeservice.dto.AllPropertyDTO;
+import com.example.welcomeservice.dto.PropertyDTO;
 import com.example.welcomeservice.entity.Owner;
 import com.example.welcomeservice.entity.Property;
 import com.example.welcomeservice.entity.User;
+import com.example.welcomeservice.exception.*;
 import com.example.welcomeservice.jwt.JwtUtil;
 import com.example.welcomeservice.mapstruct.MapStructMapper;
 import com.example.welcomeservice.repository.OwnerRepository;
 import com.example.welcomeservice.repository.UserRepository;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +46,7 @@ public class WelcomeService {
         return propertyList.stream().map(property -> mapStructMapper.propertyToAllPropertyDto(property)).collect(Collectors.toList());
     }
 
-    public String buyProperty(HttpServletRequest request, int propertyid) throws Exception {
+    public PropertyDTO buyProperty(HttpServletRequest request, int propertyid) throws Exception {
 
         Property property = propertyService.getProperty(propertyid);
 
@@ -51,35 +54,29 @@ public class WelcomeService {
         if(property == null) throw new PropertyNotFoundException();
 
         if(property.isSold())
-            return "Property already bought";
+            throw new PropertySoldException();
 
-        User user = (User) getOwnerOrUser(request);
-        if(user!=null){
-            property.setUser(user);
-            propertyService.saveProperty(property);
-
-            List<Property> userPropertyList = user.getPropertyList();
-            property.setSold(true);
-            userPropertyList.add(property);
-            userRepository.save(user);
-            return "Property bought successfully";
+        User user ;
+        try {
+             user = (User) getOwnerOrUser(request);
+        }catch (Exception e){
+            user = null;
         }
-        return "Some error occured for buyProperty ";
+
+        if(user == null)
+        {
+            throw new UserNotFoundException();
+        }
+
+        property.setUser(user);
+        propertyService.saveProperty(property);
+
+        List<Property> userPropertyList = user.getPropertyList();
+        property.setSold(true);
+        userPropertyList.add(property);
+        userRepository.save(user);
+        return mapStructMapper.propertyToPropertyDto(property);
     }
-
-    /*private AllPropertyDTO toAllPropertyDTO(Property property){
-
-        AllPropertyDTO allPropertyDTO = new AllPropertyDTO();
-
-        allPropertyDTO.setPropertyId(property.getPropertyId());
-        allPropertyDTO.setPropertyName(property.getPropertyName());
-        allPropertyDTO.setPrice(property.getPrice());
-        allPropertyDTO.setArea(property.getArea());
-        allPropertyDTO.setImage(property.getImages().get(0).getImage());
-        allPropertyDTO.setAddress(property.getAddress());
-
-        return allPropertyDTO;
-    }*/
 
     private Object getOwnerOrUser(HttpServletRequest request){
         String requestTokenHeader = request.getHeader("Authorization");
@@ -87,10 +84,20 @@ public class WelcomeService {
         String email = null;
         if(requestTokenHeader!=null && requestTokenHeader.startsWith("Bearer ")){
             jwtToken = requestTokenHeader.substring(7);
-//            if(jwtUtil.isTokenExpired(jwtToken)==true) throw new JwtTokenExpiredException();
-            email = jwtUtil.extractUsername(jwtToken);
+
+            try{
+                email = jwtUtil.extractUsername(jwtToken);
+            }catch (ExpiredJwtException e){
+                throw new JwtTokenExpiredException();
+            }catch (SignatureException | MalformedJwtException e){
+                throw new JwtSignatureException();
+            } catch (Exception e){
+                return null;
+            }
+
             User user = userRepository.findByEmail(email);
             Owner owner = ownerRepository.findByEmail(email);
+
             if(user == null && owner==null)
                 throw new UserNotFoundException();
             if(user!=null)
