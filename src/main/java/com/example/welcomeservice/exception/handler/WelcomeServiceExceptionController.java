@@ -35,4 +35,10 @@ public class WelcomeServiceExceptionController {
     return new ResponseEntity<>("Jwt Token has been expired", HttpStatus.BAD_REQUEST);
   }
 
+  @ExceptionHandler(value = PropertyAlreadyRequested.class)
+  public ResponseEntity<Object> propertyAlreadyRequested(PropertyAlreadyRequested exception) {
+    return new ResponseEntity<>("Property Already requested to buy", HttpStatus.ALREADY_REPORTED);
+  }
+
+
 }

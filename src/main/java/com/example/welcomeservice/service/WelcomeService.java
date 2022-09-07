@@ -6,11 +6,13 @@ import com.example.welcomeservice.dto.UserPropertyReqDTO;
 import com.example.welcomeservice.entity.Owner;
 import com.example.welcomeservice.entity.Property;
 import com.example.welcomeservice.entity.User;
+import com.example.welcomeservice.entity.UserReqProperty;
 import com.example.welcomeservice.exception.*;
 import com.example.welcomeservice.jwt.JwtUtil;
 import com.example.welcomeservice.mapstruct.MapStructMapper;
 import com.example.welcomeservice.repository.OwnerRepository;
 import com.example.welcomeservice.repository.UserRepository;
+import com.example.welcomeservice.repository.UserReqPropertyRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -37,6 +39,9 @@ public class WelcomeService {
     private OwnerRepository ownerRepository;
 
     @Autowired
+    private UserReqPropertyRepository userReqPropertyRepository;
+
+    @Autowired
     private MapStructMapper mapStructMapper;
 
     @Autowired
@@ -60,17 +65,20 @@ public class WelcomeService {
         if(user == null)
             throw new UserNotFoundException();
 
-        Set<User> userSet = property.getReqUsers();
-        userSet.add(user);
-        property.setReqUsers(userSet);
-        propertyService.saveProperty(property);
+        if(userReqPropertyRepository.existsByUserAndProperty(user , property))
+            throw new PropertyAlreadyRequested();
 
-        List<Property> reqPropertyList = user.getReqPropertyList();
-        reqPropertyList.add(property);
+        UserReqProperty userReqProperty = new UserReqProperty();
+        userReqProperty.setUser(user);
+        userReqProperty.setProperty(property);
+        userReqPropertyRepository.save(userReqProperty);
+
+        List<UserReqProperty> reqPropertyList = user.getReqPropertyList();
+        reqPropertyList.add(userReqProperty);
         user.setReqPropertyList(reqPropertyList);
         userRepository.save(user);
 
-        return mapStructMapper.userToUserPropertyReqDto(user);
+        return mapStructMapper.requestToUserPropertyReqDto(userReqProperty);
     }
 
     private Object getOwnerOrUser(HttpServletRequest request){

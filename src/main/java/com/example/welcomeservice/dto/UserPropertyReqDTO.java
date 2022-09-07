@@ -1,5 +1,6 @@
 package com.example.welcomeservice.dto;
 
+import com.example.welcomeservice.entity.UserReqProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,10 +9,6 @@ import java.util.List;
 @Getter
 @Setter
 public class UserPropertyReqDTO {
-    private int userId;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String mobileNumber;
-    private List<AllPropertyDTO> reqPropertyList;
+    private UserDTO user;
+    private PropertyDTO property;
 }

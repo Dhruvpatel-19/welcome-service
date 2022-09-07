@@ -6,6 +6,7 @@ import com.example.welcomeservice.dto.UserDTO;
 import com.example.welcomeservice.dto.UserPropertyReqDTO;
 import com.example.welcomeservice.entity.Property;
 import com.example.welcomeservice.entity.User;
+import com.example.welcomeservice.entity.UserReqProperty;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
@@ -14,5 +15,5 @@ public interface MapStructMapper {
     UserDTO userToUserDto(User user);
     PropertyDTO propertyToPropertyDto(Property property);
 
-    UserPropertyReqDTO userToUserPropertyReqDto(User user);
+    UserPropertyReqDTO requestToUserPropertyReqDto(UserReqProperty userReqProperty);
 }
