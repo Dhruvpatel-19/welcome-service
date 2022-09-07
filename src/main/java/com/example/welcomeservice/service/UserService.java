@@ -32,12 +32,24 @@ public class UserService {
 
     public UserDTO updateUser(int id , User updatedUser){
         User user = userRepository.findById(id).orElse(null);
-        if(userRepository.findById(id)==null)throw new UserNotFoundException();
+
+        if(user==null)
+            throw new UserNotFoundException();
+
         user.setFirstName(updatedUser.getFirstName());
         user.setLastName(updatedUser.getLastName());
         user.setMobileNumber(updatedUser.getMobileNumber());
 
         userRepository.save(user);
         return mapStructMapper.userToUserDto(user);
+    }
+
+    public void deleteUser(int id){
+        User user = userRepository.findById(id).orElse(null);
+
+        if(user==null)
+            throw new UserNotFoundException();
+
+        userRepository.deleteById(user.getUserId());
     }
 }

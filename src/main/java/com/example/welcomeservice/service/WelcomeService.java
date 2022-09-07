@@ -2,6 +2,7 @@ package com.example.welcomeservice.service;
 
 import com.example.welcomeservice.dto.AllPropertyDTO;
 import com.example.welcomeservice.dto.PropertyDTO;
+import com.example.welcomeservice.dto.UserPropertyReqDTO;
 import com.example.welcomeservice.entity.Owner;
 import com.example.welcomeservice.entity.Property;
 import com.example.welcomeservice.entity.User;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,36 +48,29 @@ public class WelcomeService {
         return propertyList.stream().map(property -> mapStructMapper.propertyToAllPropertyDto(property)).collect(Collectors.toList());
     }
 
-    public PropertyDTO buyProperty(HttpServletRequest request, int propertyid) throws Exception {
-
-        Property property = propertyService.getProperty(propertyid);
-
-
-        if(property == null) throw new PropertyNotFoundException();
-
-        if(property.isSold())
-            throw new PropertySoldException();
+    public UserPropertyReqDTO buyPropertyReq(HttpServletRequest request , int propertyId){
+        Property property = propertyService.getProperty(propertyId);
 
         User user ;
         try {
-             user = (User) getOwnerOrUser(request);
+            user = (User) getOwnerOrUser(request);
         }catch (Exception e){
             user = null;
         }
-
         if(user == null)
-        {
             throw new UserNotFoundException();
-        }
 
-        property.setUser(user);
+        Set<User> userSet = property.getReqUsers();
+        userSet.add(user);
+        property.setReqUsers(userSet);
         propertyService.saveProperty(property);
 
-        List<Property> userPropertyList = user.getPropertyList();
-        property.setSold(true);
-        userPropertyList.add(property);
+        List<Property> reqPropertyList = user.getReqPropertyList();
+        reqPropertyList.add(property);
+        user.setReqPropertyList(reqPropertyList);
         userRepository.save(user);
-        return mapStructMapper.propertyToPropertyDto(property);
+
+        return mapStructMapper.userToUserPropertyReqDto(user);
     }
 
     private Object getOwnerOrUser(HttpServletRequest request){
@@ -99,7 +94,7 @@ public class WelcomeService {
             Owner owner = ownerRepository.findByEmail(email);
 
             if(user == null && owner==null)
-                throw new UserNotFoundException();
+                return null;
             if(user!=null)
                 return user;
             else

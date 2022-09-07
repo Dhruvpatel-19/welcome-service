@@ -30,4 +30,9 @@ public class UserController {
     public UserDTO updateUser(@PathVariable("id") int id ,@RequestBody User updatedUser){
         return userService.updateUser(id,  updatedUser);
     }
+
+    @DeleteMapping(value = "/delete/{id}")
+    public void deleteUser(@PathVariable("id") int id){
+         userService.deleteUser(id);
+    }
 }

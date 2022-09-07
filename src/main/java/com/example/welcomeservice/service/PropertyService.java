@@ -25,9 +25,10 @@ public class PropertyService {
     }
 
     public Property getProperty(int id){
-        Optional<Property> property = propertyRepository.findById(id);
-        if (property.isPresent()==false) throw new PropertyNotFoundException();
-            return property.get();
+        Property property = propertyRepository.findById(id).orElse(null);
+        if (property == null)
+            throw new PropertyNotFoundException();
+        return property;
     }
 
     public Property saveProperty(Property property){
