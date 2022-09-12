@@ -9,4 +9,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserReqPropertyRepository extends JpaRepository<UserReqProperty , Integer> {
     boolean existsByUserAndProperty(User user, Property property);
+
+    void deleteByUserAndProperty(User user, Property property);
+
+    UserReqProperty findByUserAndProperty(User user, Property property);
 }

@@ -1,7 +1,6 @@
 package com.example.welcomeservice.controller;
 
 import com.example.welcomeservice.dto.AllPropertyDTO;
-import com.example.welcomeservice.dto.PropertyDTO;
 import com.example.welcomeservice.dto.UserPropertyReqDTO;
 import com.example.welcomeservice.service.WelcomeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,6 +30,12 @@ public class WelcomeController {
     @GetMapping(value = "/buyPropertyReq/{propertyId}")
     public UserPropertyReqDTO buyPropertyReq(HttpServletRequest request , @PathVariable("propertyId") int id){
         return welcomeService.buyPropertyReq(request , id);
+    }
+
+    @Operation(summary = "Remove Buy Property Request" ,description = "This method is used to remove the request made to buy property")
+    @GetMapping(value = "/removePropertyReq/{propertyId}")
+    public UserPropertyReqDTO removePropertyReq(HttpServletRequest request , @PathVariable("propertyId") int id){
+        return welcomeService.removePropertyReq(request , id);
     }
 
 }

@@ -40,5 +40,10 @@ public class WelcomeServiceExceptionController {
     return new ResponseEntity<>("Property Already requested to buy", HttpStatus.ALREADY_REPORTED);
   }
 
+  @ExceptionHandler(value = PropertyNotRequested.class)
+  public ResponseEntity<Object> propertyNotRequested(PropertyNotRequested exception) {
+    return new ResponseEntity<>("Property was not requested to buy", HttpStatus.NOT_FOUND);
+  }
+
 
 }

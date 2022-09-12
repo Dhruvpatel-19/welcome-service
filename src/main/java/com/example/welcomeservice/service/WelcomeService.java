@@ -1,7 +1,6 @@
 package com.example.welcomeservice.service;
 
 import com.example.welcomeservice.dto.AllPropertyDTO;
-import com.example.welcomeservice.dto.PropertyDTO;
 import com.example.welcomeservice.dto.UserPropertyReqDTO;
 import com.example.welcomeservice.entity.Owner;
 import com.example.welcomeservice.entity.Property;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,6 +75,28 @@ public class WelcomeService {
         reqPropertyList.add(userReqProperty);
         user.setReqPropertyList(reqPropertyList);
         userRepository.save(user);
+
+        return mapStructMapper.requestToUserPropertyReqDto(userReqProperty);
+    }
+
+    public UserPropertyReqDTO removePropertyReq(HttpServletRequest request , int propertyId){
+        Property property = propertyService.getProperty(propertyId);
+
+        User user;
+        try{
+            user  = (User) getOwnerOrUser(request);
+        }catch (Exception e){
+            user = null;
+        }
+
+        if(user==null)
+            throw new UserNotFoundException();
+
+        if(!userReqPropertyRepository.existsByUserAndProperty(user , property))
+            throw new PropertyNotRequested();
+
+        UserReqProperty userReqProperty = userReqPropertyRepository.findByUserAndProperty(user , property);
+        userReqPropertyRepository.deleteByUserAndProperty(user , property);
 
         return mapStructMapper.requestToUserPropertyReqDto(userReqProperty);
     }

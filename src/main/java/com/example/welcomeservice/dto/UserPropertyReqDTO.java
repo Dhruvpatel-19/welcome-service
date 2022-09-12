@@ -1,10 +1,7 @@
 package com.example.welcomeservice.dto;
 
-import com.example.welcomeservice.entity.UserReqProperty;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 @Getter
 @Setter
