@@ -5,10 +5,7 @@ import com.example.welcomeservice.dto.UserPropertyReqDTO;
 import com.example.welcomeservice.service.WelcomeService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -20,7 +17,7 @@ public class WelcomeController {
     @Autowired
     private WelcomeService welcomeService;
 
-    @Operation(summary = "Get All Favourite Property From User Favourite List",description = "This method is used to get all the favourite property of the user", tags = {"WelcomeController"})
+    @Operation(summary = "Get All Favourite Property",description = "This method is used to get all property", tags = {"WelcomeController"})
     @GetMapping(value = "/getAllProperty")
     public List<AllPropertyDTO> getAllProperty(){
         return welcomeService.getAllProperty();
@@ -36,6 +33,12 @@ public class WelcomeController {
     @GetMapping(value = "/removePropertyReq/{propertyId}")
     public UserPropertyReqDTO removePropertyReq(HttpServletRequest request , @PathVariable("propertyId") int id){
         return welcomeService.removePropertyReq(request , id);
+    }
+
+    @Operation(summary = "Get All Property According To Search",description = "This method is used to get all property relevant to search term", tags = {"WelcomeController"})
+    @GetMapping(value = "/search")
+    public List<AllPropertyDTO> searchProperty(@RequestParam("query") String query){
+        return welcomeService.searchProperty(query);
     }
 
 }

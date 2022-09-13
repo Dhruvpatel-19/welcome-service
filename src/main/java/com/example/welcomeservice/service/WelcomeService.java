@@ -47,7 +47,7 @@ public class WelcomeService {
 
     public List<AllPropertyDTO> getAllProperty(){
         List<Property> propertyList = propertyService.getAllProperty();
-        if(propertyList.isEmpty()) throw new PropertyNotFoundException();
+
         return propertyList.stream().map(property -> mapStructMapper.propertyToAllPropertyDto(property)).collect(Collectors.toList());
     }
 
@@ -99,6 +99,11 @@ public class WelcomeService {
         userReqPropertyRepository.deleteByUserAndProperty(user , property);
 
         return mapStructMapper.requestToUserPropertyReqDto(userReqProperty);
+    }
+
+    public List<AllPropertyDTO> searchProperty(String query){
+       List<Property> propertyList = propertyService.searchProperty(query);
+       return propertyList.stream().map(property -> mapStructMapper.propertyToAllPropertyDto(property)).collect(Collectors.toList());
     }
 
     private Object getOwnerOrUser(HttpServletRequest request){

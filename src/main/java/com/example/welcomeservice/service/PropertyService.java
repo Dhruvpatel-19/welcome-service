@@ -33,4 +33,10 @@ public class PropertyService {
     public Property saveProperty(Property property){
         return propertyRepository.save(property);
     }
+
+    public List<Property> searchProperty(String query){
+        if(propertyRepository.searchProperty(query).isEmpty())
+            throw new PropertyNotFoundException();
+        return propertyRepository.searchProperty(query);
+    }
 }
